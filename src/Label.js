@@ -97,7 +97,7 @@ export default class Label extends React.Component
     this.handler = this.handler.bind(this);
     this.handler2 = this.handler2.bind(this);
     this.handler3 = this.handler3.bind(this);
-    this.state = { raw: props.raw, fdata: props.fdata,messageShown:false,messageShown2:false,messageShown3:"" };
+    this.state = { itemType: props.itemType,raw: props.raw, fdata: props.fdata,messageShown:false,messageShown2:false,messageShown3:"" };
   }
 
   handler(stejt) {
@@ -118,18 +118,34 @@ handler3(stejt3) {
 
   render ()
   {
-    const { fdata, raw,messageShown,messageShown2,messageShown3 } = this.state;
 
-    if (isNaN(raw[0]))
+    const { itemType,fdata, raw,messageShown,messageShown2,messageShown3 } = this.state;
+    if (isNaN(raw[0])&&raw[raw.length-1]!=='objects' &&itemType==='Array')
     {
       return (
-        <div style={{ display: 'inline' }} >
-          <Button style={{ display: 'inline' }} onClick={(e) => { handleClick(e, raw, fdata,messageShown,messageShown2,messageShown3) }} color='primary' variant="contained">{raw[0]}</Button>
-          <SimpleModal style={{ display: 'inline' }} action={this.handler} action2={this.handler2} action3={this.handler3} />
+        <div>
+          <Button onClick={(e) => { handleClick(e, raw, fdata,messageShown,messageShown2,messageShown3) }} color='primary' variant="contained">{raw[0]}</Button>
+          <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
         </div>
-
       );
     }
-    return <div>{raw[0]}</div>
+    else  if (isNaN(raw[0]) &&itemType==='Array' )
+    return (
+      <div>
+        <Button  onClick={(e) => { handleClick(e, raw, fdata,messageShown,messageShown2,messageShown3) }} color='secondary' variant="contained">{raw[0]}</Button>
+        <SimpleModal  action={this.handler} action2={this.handler2} action3={this.handler3} />
+      </div>
+    );
+    else if (isNaN(raw[0])&&raw[raw.length-1]!=='objects' )
+    {
+      return (
+          <Button onClick={(e) => { handleClick(e, raw, fdata,messageShown,messageShown2,messageShown3) }} color='primary' variant="contained">{raw[0]}</Button>
+      );
+    }
+    else  if (isNaN(raw[0])  )
+    return (
+        <Button onClick={(e) => { handleClick(e, raw, fdata,messageShown,messageShown2,messageShown3) }} color='secondary' variant="contained">{raw[0]}</Button>
+    );
+    return <div></div>
   }
 }

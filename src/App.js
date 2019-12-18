@@ -5,6 +5,9 @@ import Value from "./Value";
 import HeroList, { HeroListItem } from "./HeroList";
 import './App.css';
 import JSONTree from 'react-json-tree';
+var groupBy = require('lodash.groupby');
+var mergeWith = require('lodash.mergewith');
+var isArray = require('lodash.isarray');
 function getAttrs (val)
 {
   const result = [];
@@ -33,6 +36,7 @@ function prepareData (sampledata)
   {
     preparedData.name = sampledata['ado:publishing'].model._name;
     preparedData.class = sampledata['ado:publishing'].model._class;
+    preparedData.type = sampledata['ado:publishing'].model._idclass;
     preparedData.images = sampledata.images;
     preparedData.chapters = [];
     for (let [index, val] of sampledata['ado:publishing'].model.notebook.chapter.entries())
@@ -74,6 +78,7 @@ function prepareData (sampledata)
       var object = {};
       object.name = oval._name;
       object.class = oval._class;
+      object.type = oval._idclass;
       object.ochapters = [];
       for (let [index, val] of oval.notebook.chapter.entries())
       {
@@ -118,6 +123,7 @@ function prepareData (sampledata)
   {
     preparedData.name = sampledata['ado:publishing'].object._name;
     preparedData.class = sampledata['ado:publishing'].object._class;
+    preparedData.type = sampledata['ado:publishing'].object._idclass;
     preparedData.images = "";
     preparedData.chapters = [];
     for (let [index, val] of sampledata['ado:publishing'].object.notebook.chapter.entries())
@@ -152,6 +158,34 @@ function prepareData (sampledata)
     }
     preparedData.objects = [];
   }
+  var groupedobjects = groupBy(preparedData.objects, 'class');
+  var out = [];
+  Object.keys(groupedobjects).forEach(function (item)
+  {
+    function customizer (objValue, srcValue)
+    {
+      if (isArray(srcValue))
+      {
+        return mergeWith(srcValue, objValue, customizer);
+      }
+      else if (typeof objValue === 'string')
+      {
+        if (!objValue.includes(srcValue))
+        {
+          return objValue.concat('\n' + srcValue);
+        }
+        else
+        {
+          return objValue;
+        }
+      }
+    }
+    var merged = groupedobjects[item][0];
+    mergeWith(merged, ...groupedobjects[item], customizer);
+
+    out.push(merged);
+  });
+  preparedData.objects=out;
   return preparedData;
 }
 function getComplexVals (passedval, passedinp)
@@ -303,6 +337,26 @@ export default class App extends React.Component
           this.setState({ fdata: prepareData(data) });
         });
     };
+    const theme = {
+      scheme: 'monokai',
+      author: 'wimer hazenberg (http://www.monokai.nl)',
+      base00: '#FFFFFF',
+      base01: '#000000',
+      base02: '#000000',
+      base03: '#000000',
+      base04: '#000000',
+      base05: '#000000',
+      base06: '#000000',
+      base07: '#000000',
+      base08: '#000000',
+      base09: '#000000',
+      base0A: '#000000',
+      base0B: '#000000',
+      base0C: '#000000',
+      base0D: '#000000',
+      base0E: '#000000',
+      base0F: '#000000'
+    };
     return (
       <div className="ms-welcome">
         <form
@@ -322,8 +376,12 @@ export default class App extends React.Component
           </p>
           <JSONTree data={fdata}
             hideRoot={true}
-            labelRenderer={raw => <Label raw={raw} fdata={fdata}/>}
-            valueRenderer={raw => <Value raw={raw}  /> } />
+            theme={theme}
+            invertTheme={false}
+            labelRenderer={(raw, itemType) => <Label raw={raw} fdata={fdata} itemType={itemType} />}
+            valueRenderer={raw => <Value raw={raw} />}
+            getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
+          />
         </HeroList>
       </div>
     );
