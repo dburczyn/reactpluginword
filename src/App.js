@@ -2,12 +2,15 @@ import * as React from "react";
 import Header from "./Header";
 import Label from "./Label";
 import Value from "./Value";
+import EnhancedTable from "./tabelka";
 import HeroList, { HeroListItem } from "./HeroList";
 import './App.css';
 import JSONTree from 'react-json-tree';
 var groupBy = require('lodash.groupby');
 var mergeWith = require('lodash.mergewith');
 var isArray = require('lodash.isarray');
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 function getAttrs (val)
 {
   const result = [];
@@ -36,7 +39,7 @@ function prepareData (sampledata)
   {
     preparedData.name = sampledata['ado:publishing'].model._name;
     preparedData.class = sampledata['ado:publishing'].model._class;
-    preparedData.type = sampledata['ado:publishing'].model._idclass;
+    // preparedData.type = sampledata['ado:publishing'].model._idclass;
     preparedData.images = sampledata.images;
     preparedData.chapters = [];
     for (let [index, val] of sampledata['ado:publishing'].model.notebook.chapter.entries())
@@ -78,7 +81,7 @@ function prepareData (sampledata)
       var object = {};
       object.name = oval._name;
       object.class = oval._class;
-      object.type = oval._idclass;
+      // object.type = oval._idclass;
       object.ochapters = [];
       for (let [index, val] of oval.notebook.chapter.entries())
       {
@@ -123,7 +126,7 @@ function prepareData (sampledata)
   {
     preparedData.name = sampledata['ado:publishing'].object._name;
     preparedData.class = sampledata['ado:publishing'].object._class;
-    preparedData.type = sampledata['ado:publishing'].object._idclass;
+    // preparedData.type = sampledata['ado:publishing'].object._idclass;
     preparedData.images = "";
     preparedData.chapters = [];
     for (let [index, val] of sampledata['ado:publishing'].object.notebook.chapter.entries())
@@ -172,7 +175,7 @@ function prepareData (sampledata)
       {
         if (!objValue.includes(srcValue))
         {
-          return objValue.concat('\n' + srcValue);
+          return objValue.concat(String.fromCharCode(7) + srcValue);
         }
         else
         {
@@ -300,18 +303,18 @@ export default class App extends React.Component
   {
     this.setState({
       listItems: [
-        {
-          icon: "Ribbon",
-          primaryText: "Achieve more with Office integration"
-        },
-        {
-          icon: "Unlock",
-          primaryText: "Unlock features and functionality"
-        },
-        {
-          icon: "Design",
-          primaryText: "Create and visualize like a pro"
-        }
+        // {
+        //   icon: "Ribbon",
+        //   primaryText: "Achieve more with Office integration"
+        // },
+        // {
+        //   icon: "Unlock",
+        //   primaryText: "Unlock features and functionality"
+        // },
+        // {
+        //   icon: "Design",
+        //   primaryText: "Create and visualize like a pro"
+        // }
       ]
     });
   }
@@ -319,12 +322,14 @@ export default class App extends React.Component
   {
     const { title, isOfficeInitialized } = this.props;
     const { fdata } = this.state;
+    console.log(JSON.stringify(fdata));
     const handleSubmit = (e) =>
     {
       e.stopPropagation();
       e.preventDefault();
-      fetch('http://localhost:8080/static/' + e.target.username.value + '.js')
-        .then(function (response)
+      // fetch('https://10.0.7.141:8443/static/' + e.target.username.value + '.js')
+      fetch('test.js')
+      .then(function (response)
         {
           if (response.status >= 400)
           {
@@ -359,6 +364,9 @@ export default class App extends React.Component
     };
     return (
       <div className="ms-welcome">
+
+            <Header logo="adonis.png" title={this.props.title} message="ADONIS NP Template Plugin" />
+        <HeroList message="Model Structure" items={this.state.listItems}>
         <form
           onSubmit={(e) => { handleSubmit(e) }}
         >
@@ -367,12 +375,11 @@ export default class App extends React.Component
             name="username"
             type="text"
           />
-          <button>Send data!</button>
+          <button>Get structure!</button>
         </form>
-        <Header logo="assets/logo-filled.png" title={this.props.title} message="Welcome" />
-        <HeroList message="Discovery what Office Add-ins can do for you today!" items={this.state.listItems}>
+
           <p className="ms-font-l">
-            Modify the source files, then click <b>Run</b>.
+            Insert structure name, then click <b>Get Structure!</b>.
           </p>
           <JSONTree data={fdata}
             hideRoot={true}
@@ -382,6 +389,7 @@ export default class App extends React.Component
             valueRenderer={raw => <Value raw={raw} />}
             getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
           />
+          <EnhancedTable></EnhancedTable>
         </HeroList>
       </div>
     );

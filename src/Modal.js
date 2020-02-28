@@ -29,8 +29,10 @@ export default function SimpleModal (props)
 
     const [open, setOpen] = React.useState(false);
 
-    const handleOpen = () =>
+    const handleOpen = (e) =>
     {
+        e.stopPropagation();
+        e.preventDefault();
         setOpen(true);
     };
 
@@ -99,7 +101,7 @@ export default function SimpleModal (props)
                             control={
                                 <TextField
                                 id="outlined-secondary"
-                                label="Outlined secondary"
+                                label="Filter Out"
                                 variant="outlined"
                                 color="secondary"
                                 disabled={!state.checkedB}
@@ -107,7 +109,7 @@ export default function SimpleModal (props)
                                 value={state.valueB}
                               />
                             }
-                            label="Filter Keywords"
+                            label=" Filter Keywords"
                         />
 
 

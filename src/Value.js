@@ -11,9 +11,14 @@ export default class Value extends React.Component
   render ()
   {
     const { data } = this.state;
+    var splited = data.toString().split(String.fromCharCode(7));
     return (
       <div style={{ display: 'inherit' }}>
-        {data !== 'undefined' ? data : <ImageIcon color="primary" />}
+{splited.map((value) => {
+  if (value.length > 30)
+  {value = value.substring(0,30) + "..."}
+        return <div> {value !== 'undefined' ? value : <ImageIcon color="primary" />}</div>
+      })}
       </div>
     );
   }
