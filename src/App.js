@@ -5,12 +5,18 @@ import Value from "./Value";
 import EnhancedTable from "./tabelka";
 import HeroList, { HeroListItem } from "./HeroList";
 import './App.css';
+
+// import './grupowanie.js';
+
+import { grupowanie } from './grupowanie.js';
 import JSONTree from 'react-json-tree';
 var groupBy = require('lodash.groupby');
 var mergeWith = require('lodash.mergewith');
 var isArray = require('lodash.isarray');
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
+// var grupowanie = require('./grupowanie.js');
+var flatten = require('flat')
 function getAttrs (val)
 {
   const result = [];
@@ -161,34 +167,13 @@ function prepareData (sampledata)
     }
     preparedData.objects = [];
   }
-  var groupedobjects = groupBy(preparedData.objects, 'class');
-  var out = [];
-  Object.keys(groupedobjects).forEach(function (item)
-  {
-    function customizer (objValue, srcValue)
-    {
-      if (isArray(srcValue))
-      {
-        return mergeWith(srcValue, objValue, customizer);
-      }
-      else if (typeof objValue === 'string')
-      {
-        if (!objValue.includes(srcValue))
-        {
-          return objValue.concat(String.fromCharCode(7) + srcValue);
-        }
-        else
-        {
-          return objValue;
-        }
-      }
-    }
-    var merged = groupedobjects[item][0];
-    mergeWith(merged, ...groupedobjects[item], customizer);
 
-    out.push(merged);
-  });
-  preparedData.objects=out;
+
+
+preparedData.objects=grupowanie(preparedData.objects);
+
+
+
   return preparedData;
 }
 function getComplexVals (passedval, passedinp)
@@ -296,7 +281,8 @@ export default class App extends React.Component
     super(props, context);
     this.state = {
       listItems: [],
-      fdata: {}
+      fdata: {},
+      arraytotableout:[]
     };
   }
   componentDidMount ()
@@ -321,8 +307,10 @@ export default class App extends React.Component
   render ()
   {
     const { title, isOfficeInitialized } = this.props;
-    const { fdata } = this.state;
-    console.log(JSON.stringify(fdata));
+    const { fdata,arraytotableout } = this.state;
+    // console.log(JSON.stringify(fdata));
+    var qq =flatten(fdata);
+      // console.log(JSON.stringify(qq));
     const handleSubmit = (e) =>
     {
       e.stopPropagation();
@@ -340,6 +328,31 @@ export default class App extends React.Component
         .then(data =>
         {
           this.setState({ fdata: prepareData(data) });
+          var arrayrows = [];
+          function getAttrsInn2 (obj)
+          {
+            let row = {};
+          for (const prop in obj)
+          {
+            const value = obj[prop];
+            if (typeof value === 'object')
+            {
+              getAttrsInn2(value);
+            }
+            else if (typeof value === 'string' || typeof value === 'number' )
+            {
+                // console.log("jeststringiem   " +prop + "   " +value );
+                row[prop]=value;
+
+            }
+            if(Object.entries(row).length !== 0 && row.constructor === Object && !arrayrows.includes(row))
+            {arrayrows.push(row);}
+          }
+
+        }
+          getAttrsInn2(prepareData(data));
+
+  this.setState({ arraytotableout:   arrayrows });
         });
     };
     const theme = {
@@ -389,7 +402,7 @@ export default class App extends React.Component
             valueRenderer={raw => <Value raw={raw} />}
             getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
           />
-          <EnhancedTable></EnhancedTable>
+          <EnhancedTable rows={arraytotableout}></EnhancedTable>
         </HeroList>
       </div>
     );

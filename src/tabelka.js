@@ -20,26 +20,27 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import Label from "./Label";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, calories, searchname, carbs, value) {
+  return { name, calories, searchname, carbs, value };
 }
 
-const rows = [
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Donut', 452, 25.0, 51, 4.9),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Honeycomb', 408, 3.2, 87, 6.5),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Jelly Bean', 375, 0.0, 94, 0.0),
-  createData('KitKat', 518, 26.0, 65, 7.0),
-  createData('Lollipop', 392, 0.2, 98, 0.0),
-  createData('Marshmallow', 318, 0, 81, 2.0),
-  createData('Nougat', 360, 19.0, 9, 37.0),
-  createData('Oreo', 437, 18.0, 63, 4.0),
-];
+// const rows = [
+//   createData('Cupcake', 305, 3.7, 67, 4.3),
+//   createData('Donut', 452, 25.0, 51, 4.9),
+//   createData('Eclair', 262, 16.0, 24, 6.0),
+//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9),
+//   createData('Honeycomb', 408, 3.2, 87, 6.5),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
+//   createData('KitKat', 518, 26.0, 65, 7.0),
+//   createData('Lollipop', 392, 0.2, 98, 0.0),
+//   createData('Marshmallow', 318, 0, 81, 2.0),
+//   createData('Nougat', 360, 19.0, 9, 37.0),
+//   createData('Oreo', 437, 18.0, 63, 4.0),
+// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -69,20 +70,21 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Nazwa atrybutu przycisk' },
-  { id: 'calories', numeric: true, disablePadding: false, label: 'Nazwa atrybutu' },
-  { id: 'fat', numeric: true, disablePadding: false, label: 'Wartosc atrbutu przycisk' },
-  { id: 'protein', numeric: true, disablePadding: false, label: 'Wartosc atrybutu' },
+  { id: 'calories', numeric: false, disablePadding: false, label: 'Nazwa atrybutu' },
+  { id: 'searchname', numeric: false, disablePadding: false, label: 'Wartosc atrbutu przycisk' },
+  { id: 'value', numeric: false, disablePadding: false, label: 'Wartosc atrybutu' },
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
 
+
   return (
     <TableHead>
-      <TableRow>
+      <TableRow className={classes.head}>
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -94,7 +96,8 @@ function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            // align={headCell.numeric ? 'right' : 'left'}
+            align={'center'}
             padding={headCell.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -163,7 +166,7 @@ const EnhancedTableToolbar = props => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle">
-          Nutrition
+          Model structure
         </Typography>
       )}
 
@@ -192,6 +195,15 @@ const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
   },
+  head:{
+    backgroundColor: "lightblue",
+  },
+  chapter:{
+    backgroundColor: "gray",
+  },
+  object:{
+    backgroundColor: "red",
+  },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
@@ -212,7 +224,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -271,7 +283,32 @@ export default function EnhancedTable() {
 
   const isSelected = name => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  const{rows}=props
+
+
+  // const rows = arraytotable;
+
+// const rows = [
+//   createData('Cupcake', 305, 3.7, 67, 4.3),
+//   createData('Donut', 452, 25.0, 51, 4.9),
+//   createData('Eclair', 262, 16.0, 24, 6.0),
+//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9),
+//   createData('Honeycomb', 408, 3.2, 87, 6.5),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
+//   createData('KitKat', 518, 26.0, 65, 7.0),
+//   createData('Lollipop', 392, 0.2, 98, 0.0),
+//   createData('Marshmallow', 318, 0, 81, 2.0),
+//   createData('Nougat', 360, 19.0, 9, 37.0),
+//   createData('Oreo', 437, 18.0, 63, 4.0),
+// ];
+// console.log(arraytotable)
+// console.log(rows)
+const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+
 
   return (
     <div className={classes.root}>
@@ -300,15 +337,20 @@ export default function EnhancedTable() {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
+
+if (typeof row.class === 'string')
+{
+
                   return (
                     <TableRow
-                      hover
-                      onClick={event => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
+                      // hover
+                      // onClick={event => handleClick(event, row.name)}
+                      // role="checkbox"
+                      // aria-checked={isItemSelected}
+                      // tabIndex={-1}
+                      // key={row.name}
+                      // selected={isItemSelected}
+                      className={classes.object}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
@@ -317,13 +359,80 @@ export default function EnhancedTable() {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.name}
+                      <Label raw={row.name}  />
                       </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">  <Label raw={row.class}  /></TableCell>
+                      <TableCell align="center">{row.class}</TableCell>
                     </TableRow>
                   );
+                  }
+
+                  else if (Object.keys(row).length===1)
+{
+
+
+                  return (
+                    <TableRow
+                      // hover
+                      // onClick={event => handleClick(event, row.name)}
+                      // role="checkbox"
+                      // aria-checked={isItemSelected}
+                      // tabIndex={-1}
+                      // key={row.name}
+                      // selected={isItemSelected}
+                      className={classes.chapter}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <Label raw={row.name}  />
+                      </TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.value}</TableCell>
+                      <TableCell align="center">{row.value || row.values}</TableCell>
+                    </TableRow>
+                  );
+                  }
+else{
+
+                  return (
+                    <TableRow
+                      // hover
+                      // onClick={event => handleClick(event, row.name)}
+                      // role="checkbox"
+                      // aria-checked={isItemSelected}
+                      // tabIndex={-1}
+                      // key={row.name}
+                      // selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <Label raw={row.searchname}  />
+                      </TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">  <Label raw={row.searchname}  /></TableCell>
+                      <TableCell align="center">{row.value || row.values}</TableCell>
+                    </TableRow>
+                  );
+
+
+                  }
+
+
+
+
+
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>

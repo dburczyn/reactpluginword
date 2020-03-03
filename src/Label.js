@@ -137,7 +137,7 @@ export default class Label extends React.Component
   {
 
     const { itemType, fdata, raw, messageShown, messageShown2, messageShown3 } = this.state;
-    if (isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && itemType === 'Array')
+    if (raw&&isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && itemType === 'Array')
     {
       return (
         <div>
@@ -146,14 +146,14 @@ export default class Label extends React.Component
         </div>
       );
     }
-    else if (isNaN(raw[0]) && itemType === 'Array')
+    else if (raw && isNaN(raw[0]) && itemType === 'Array')
       return (
         <div>
           <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]}</Button>
           <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
         </div>
       );
-    else if (isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && raw[0]!=='type')
+    else if (raw && isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && raw[0]!=='type')
     {
       return (
         <div>
@@ -162,7 +162,7 @@ export default class Label extends React.Component
         </div>
         );
     }
-    else if (isNaN(raw[0]) && raw[0]!=='type')
+    else if (raw && isNaN(raw[0]) && raw[0]!=='type')
       return (
         <div>
         <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]==='searchname' ? 'Global': raw[0]}</Button>
