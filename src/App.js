@@ -5,17 +5,10 @@ import Value from "./Value";
 import EnhancedTable from "./tabelka";
 import HeroList, { HeroListItem } from "./HeroList";
 import './App.css';
-
-// import './grupowanie.js';
-
 import { grupowanie } from './grupowanie.js';
 import JSONTree from 'react-json-tree';
-var groupBy = require('lodash.groupby');
-var mergeWith = require('lodash.mergewith');
-var isArray = require('lodash.isarray');
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
-// var grupowanie = require('./grupowanie.js');
 var flatten = require('flat')
 function getAttrs (val)
 {
@@ -167,13 +160,7 @@ function prepareData (sampledata)
     }
     preparedData.objects = [];
   }
-
-
-
 preparedData.objects=grupowanie(preparedData.objects);
-
-
-
   return preparedData;
 }
 function getComplexVals (passedval, passedinp)
@@ -282,7 +269,10 @@ export default class App extends React.Component
     this.state = {
       listItems: [],
       fdata: {},
-      arraytotableout:[]
+      arraytotableout:[],
+      splitedelenments:[],
+      key:0,
+      searched2:''
     };
   }
   componentDidMount ()
@@ -307,14 +297,69 @@ export default class App extends React.Component
   render ()
   {
     const { title, isOfficeInitialized } = this.props;
-    const { fdata,arraytotableout } = this.state;
-    // console.log(JSON.stringify(fdata));
-    var qq =flatten(fdata);
-      // console.log(JSON.stringify(qq));
+    const { fdata,arraytotableout,splitedelenments,searched2 } = this.state;
+      const nodechecker = (a) =>
+      {
+        var renderuj=false;
+          splitedelenments.forEach(element => {
+          //  a.every(function(item) {
+            //  console.log("a: " +  a)
+            //  console.log("item: " +  item)
+            //  console.log("element: " +  element)
+            console.log(element.slice().reverse().toString())
+            console.log(a.toString())
+
+            if( a.toString()!=='' && element.slice().reverse().toString().includes(a.toString()))
+                      {
+                        console.log("renderuje!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+            renderuj=true;
+          }
+          //  else  {
+          //     renderuj=false;
+          //  }
+        //  });
+         });
+         return renderuj;
+//         var qq =flatten(fdata);
+//         var splitedelenment=[]
+//         var renderuj=false
+//          Object.keys(qq).forEach(element => {
+//           if (sercz!=='' && typeof qq[element] === 'string'&& qq[element].includes(sercz))
+//           {
+//           splitedelenment = element.split('.');
+// for (let i = 0; i < a.length; i++) {
+//           if (a[a.length-1-i]==splitedelenment[i])
+//           {
+//             // console.log(splitedelenment)
+//             renderuj=true
+//             // return true
+//           }
+//            else  {
+//               renderuj=false
+//            }
+//         }
+//           }
+//          });
+//          return renderuj;
+      }
+      const preparekeysforsearch = (key) =>
+      {
+console.log("kejjj" + key)
+var qq =flatten(fdata);
+var splitedelenmentsinner=[]
+ Object.keys(qq).forEach(element => {
+  if (key!=='' && typeof qq[element] === 'string'&& qq[element].includes(key))
+  {
+  splitedelenmentsinner.push(element.split('.'));
+  }
+ });
+return splitedelenmentsinner;
+      }
     const handleSubmit = (e) =>
     {
       e.stopPropagation();
       e.preventDefault();
+      this.setState({ key: Math.random() });
       // fetch('https://10.0.7.141:8443/static/' + e.target.username.value + '.js')
       fetch('test.js')
       .then(function (response)
@@ -328,32 +373,38 @@ export default class App extends React.Component
         .then(data =>
         {
           this.setState({ fdata: prepareData(data) });
-          var arrayrows = [];
-          function getAttrsInn2 (obj)
-          {
-            let row = {};
-          for (const prop in obj)
-          {
-            const value = obj[prop];
-            if (typeof value === 'object')
-            {
-              getAttrsInn2(value);
-            }
-            else if (typeof value === 'string' || typeof value === 'number' )
-            {
-                // console.log("jeststringiem   " +prop + "   " +value );
-                row[prop]=value;
-
-            }
-            if(Object.entries(row).length !== 0 && row.constructor === Object && !arrayrows.includes(row))
-            {arrayrows.push(row);}
-          }
-
-        }
-          getAttrsInn2(prepareData(data));
-
-  this.setState({ arraytotableout:   arrayrows });
+                //  var arrayrows = [];
+        //   function getAttrsInn2 (obj)
+        //   {
+        //     let row = {};
+        //   for (const prop in obj)
+        //   {
+        //     const value = obj[prop];
+        //     if (typeof value === 'object')
+        //     {
+        //       getAttrsInn2(value);
+        //     }
+        //     else if (typeof value === 'string' || typeof value === 'number' )
+        //     {
+        //         row[prop]=value;
+        //     }
+        //     if(Object.entries(row).length !== 0 && row.constructor === Object && !arrayrows.includes(row))
+        //     {arrayrows.push(row);}
+        //   }
+        // }
+        //   getAttrsInn2(prepareData(data));
+// console.log(arrayrows)
+  // this.setState({ arraytotableout:   arrayrows });
+  //  this.setState({ splitedelenments: preparekeysforsearch(searched)});
         });
+    };
+    const handleSubmit2 = (e) =>
+    {
+      e.stopPropagation();
+      e.preventDefault();
+      this.setState({ key: Math.random() });
+      var searched = e.target.username2.value;
+   this.setState({ splitedelenments: preparekeysforsearch(searched)});
     };
     const theme = {
       scheme: 'monokai',
@@ -377,7 +428,6 @@ export default class App extends React.Component
     };
     return (
       <div className="ms-welcome">
-
             <Header logo="adonis.png" title={this.props.title} message="ADONIS NP Template Plugin" />
         <HeroList message="Model Structure" items={this.state.listItems}>
         <form
@@ -390,19 +440,37 @@ export default class App extends React.Component
           />
           <button>Get structure!</button>
         </form>
-
+        <form
+          onSubmit={(e) => { handleSubmit2(e) }}
+        >
+          <input
+            id="username2"
+            name="username2"
+            type="text"
+          />
+          <button>Search</button>
+        </form>
           <p className="ms-font-l">
             Insert structure name, then click <b>Get Structure!</b>.
           </p>
-          <JSONTree data={fdata}
+          <JSONTree
+          key={this.state.key}
+          data={fdata}
             hideRoot={true}
             theme={theme}
             invertTheme={false}
-            labelRenderer={(raw, itemType) => <Label raw={raw} fdata={fdata} itemType={itemType} />}
-            valueRenderer={raw => <Value raw={raw} />}
-            getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
+            shouldExpandNode={(a,b,c) => {
+              let dorender = nodechecker(a)
+        console.log("czeker" + dorender )
+return dorender;
+            }}
+            // labelRenderer={(raw, itemType) =>raw}
+              // valueRenderer={raw => <span>{raw}</span>}
+             labelRenderer={(raw, itemType) => <Label raw={raw} fdata={fdata} itemType={itemType} />}
+              valueRenderer={raw => <Value raw={raw} searched2={searched2} />}
+             getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
           />
-          <EnhancedTable rows={arraytotableout}></EnhancedTable>
+          {/* <EnhancedTable rows={arraytotableout}></EnhancedTable> */}
         </HeroList>
       </div>
     );

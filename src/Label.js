@@ -8,30 +8,32 @@ function handleClick (e, f, data, messageShown, messageShown2, messageShown3)
 {
   e.stopPropagation();
   e.preventDefault();
-  if (f[f.length - 1] !== 'model')
-  {
-    f.push("model");
-  }
-  const prepareddata = {};
-  prepareddata.model = data;
-  prepareddata.images = "";
-  var ref = f.reduceRight((o, i) => o[i], prepareddata);
-  ///// arrays ///
 
-  var fEs = "";
-  var fEe = "";
-  var fTs = "";
-  var fTe = "";
-  if (messageShown)
-  {
-    fEs = "fE(";
-    fEe = ")";
-  }
-  if (messageShown2)
-  {
-    fTs = "fT(";
-    fTe = ",[" + messageShown3 + "])";
-  }
+alert(f);
+  // if (f[f.length - 1] !== 'model')
+  // {
+  //   f.push("model");
+  // }
+  // const prepareddata = {};
+  // prepareddata.model = data;
+  // prepareddata.images = "";
+  // var ref = f.reduceRight((o, i) => o[i], prepareddata);
+  // ///// arrays ///
+
+  // var fEs = "";
+  // var fEe = "";
+  // var fTs = "";
+  // var fTe = "";
+  // if (messageShown)
+  // {
+  //   fEs = "fE(";
+  //   fEe = ")";
+  // }
+  // if (messageShown2)
+  // {
+  //   fTs = "fT(";
+  //   fTe = ",[" + messageShown3 + "])";
+  // }
 
   // return Word.run(async context =>
   // {
@@ -140,35 +142,35 @@ export default class Label extends React.Component
     if (raw&&isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && itemType === 'Array')
     {
       return (
-        <div>
+        <span>
           <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{raw[0]}</Button>
           <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
-        </div>
+        </span>
       );
     }
     else if (raw && isNaN(raw[0]) && itemType === 'Array')
       return (
-        <div>
+        <span>
           <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]}</Button>
           <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
-        </div>
+        </span>
       );
     else if (raw && isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && raw[0]!=='type')
     {
       return (
-        <div>
+        <span>
         <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{raw[0]==='searchname' ? 'Global': raw[0]}</Button>
         <IconButton ></IconButton>
-        </div>
+        </span>
         );
     }
     else if (raw && isNaN(raw[0]) && raw[0]!=='type')
       return (
-        <div>
+        <span>
         <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]==='searchname' ? 'Global': raw[0]}</Button>
         <IconButton ></IconButton>
-        </div>
+        </span>
         );
-    return <div></div>
+    return <span></span>
   }
 }
