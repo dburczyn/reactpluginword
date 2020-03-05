@@ -2,14 +2,12 @@ import * as React from "react";
 import Button from '@material-ui/core/Button';
 import SimpleModal from "./Modal";
 import IconButton from '@material-ui/core/IconButton';
-
-
+import { getName } from './getname.js';
 function handleClick (e, f, data, messageShown, messageShown2, messageShown3)
 {
   e.stopPropagation();
   e.preventDefault();
-
-alert(f);
+// alert(f);
   // if (f[f.length - 1] !== 'model')
   // {
   //   f.push("model");
@@ -19,7 +17,6 @@ alert(f);
   // prepareddata.images = "";
   // var ref = f.reduceRight((o, i) => o[i], prepareddata);
   // ///// arrays ///
-
   // var fEs = "";
   // var fEe = "";
   // var fTs = "";
@@ -34,13 +31,9 @@ alert(f);
   //   fTs = "fT(";
   //   fTe = ",[" + messageShown3 + "])";
   // }
-
   // return Word.run(async context =>
   // {
-
-
   //   var selectionRange = context.document.getSelection();
-
   //   if (Array.isArray(ref))
   //   {
   //     if (f.length === 2)
@@ -97,14 +90,7 @@ alert(f);
   //   //////////////////
   //   await context.sync();
   // });
-
-
-
 }
-
-
-
-
 export default class Label extends React.Component
 {
   constructor(props, context)
@@ -115,7 +101,6 @@ export default class Label extends React.Component
     this.handler3 = this.handler3.bind(this);
     this.state = { itemType: props.itemType, raw: props.raw, fdata: props.fdata, messageShown: false, messageShown2: false, messageShown3: "" };
   }
-
   handler (stejt)
   {
     this.setState({
@@ -134,16 +119,14 @@ export default class Label extends React.Component
       messageShown3: stejt3
     });
   }
-
   render ()
   {
-
     const { itemType, fdata, raw, messageShown, messageShown2, messageShown3 } = this.state;
     if (raw&&isNaN(raw[0]) && raw[raw.length - 1] !== 'objects' && itemType === 'Array')
     {
       return (
         <span>
-          <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{raw[0]}</Button>
+          <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{getName(raw[0])}</Button>
           <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
         </span>
       );
@@ -151,7 +134,7 @@ export default class Label extends React.Component
     else if (raw && isNaN(raw[0]) && itemType === 'Array')
       return (
         <span>
-          <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]}</Button>
+          <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{getName(raw[0])}</Button>
           <SimpleModal action={this.handler} action2={this.handler2} action3={this.handler3} />
         </span>
       );
@@ -159,7 +142,7 @@ export default class Label extends React.Component
     {
       return (
         <span>
-        <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{raw[0]==='searchname' ? 'Global': raw[0]}</Button>
+        <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='primary' variant="contained">{getName(raw[0])}</Button>
         <IconButton ></IconButton>
         </span>
         );
@@ -167,7 +150,7 @@ export default class Label extends React.Component
     else if (raw && isNaN(raw[0]) && raw[0]!=='type')
       return (
         <span>
-        <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{raw[0]==='searchname' ? 'Global': raw[0]}</Button>
+        <Button onClick={(e) => { handleClick(e, raw, fdata, messageShown, messageShown2, messageShown3) }} color='secondary' variant="contained">{getName(raw[0])}</Button>
         <IconButton ></IconButton>
         </span>
         );

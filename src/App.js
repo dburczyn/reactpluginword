@@ -2,11 +2,12 @@ import * as React from "react";
 import Header from "./Header";
 import Label from "./Label";
 import Value from "./Value";
-import EnhancedTable from "./tabelka";
 import HeroList, { HeroListItem } from "./HeroList";
 import './App.css';
 import { grupowanie } from './grupowanie.js';
 import JSONTree from 'react-json-tree';
+import Button from '@material-ui/core/Button';
+import { getName } from './getname.js';
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 var flatten = require('flat')
@@ -272,7 +273,8 @@ export default class App extends React.Component
       arraytotableout:[],
       splitedelenments:[],
       key:0,
-      searched2:''
+      searched2:'',
+      visibility:true,
     };
   }
   componentDidMount ()
@@ -302,7 +304,6 @@ export default class App extends React.Component
       {
         var renderuj=false;
           splitedelenments.forEach(element => {
-
             if( a.toString()!=='' && element.slice().reverse().toString().toUpperCase().includes(a.toString().toUpperCase())&& !element.slice().reverse().toString().toUpperCase().includes(('o'+a.toString()).toUpperCase()))
                       {
             renderuj=true;
@@ -327,8 +328,9 @@ return splitedelenmentsinner;
       e.stopPropagation();
       e.preventDefault();
       this.setState({ key: Math.random() });
+      this.setState({ visibility: false });
       // fetch('https://10.0.7.141:8443/static/' + e.target.username.value + '.js')
-      fetch('test.js')
+      fetch('https://testfileserv.herokuapp.com/test.js')
       .then(function (response)
         {
           if (response.status >= 400)
@@ -350,6 +352,17 @@ return splitedelenmentsinner;
       var searched = e.target.username2.value;
    this.setState({ splitedelenments: preparekeysforsearch(searched)});
    this.setState({ searched2: searched});
+    };
+    const handleClick = (e) =>
+    {
+      e.stopPropagation();
+      e.preventDefault();
+  // return Word.run(async context =>
+  // {
+  //   var selectionRange = context.document.getSelection();
+  //   selectionRange.insertText("{FOR model in models}\n\n{END-FOR model}");
+  //   await context.sync();
+  // });
     };
     const theme = {
       scheme: 'monokai',
@@ -373,8 +386,11 @@ return splitedelenmentsinner;
     };
     return (
       <div className="ms-welcome">
-            <Header logo="adonis.png" title={this.props.title} message="ADONIS NP Template Plugin" />
-        <HeroList message="Model Structure" items={this.state.listItems}>
+        { this.state.visibility?
+        <span style={{visibility: this.state.visibility}}>
+                 <Header logo="./adonis.png" title={this.props.title} message="ADONIS Word Report Creator" />
+        <HeroList message="Insert model ID for template preparation" items={this.state.listItems}>
+        </HeroList>
         <form
           onSubmit={(e) => { handleSubmit(e) }}
         >
@@ -383,8 +399,16 @@ return splitedelenmentsinner;
             name="username"
             type="text"
           />
-          <button>Get structure!</button>
+          <button>Load model</button>
         </form>
+        </span> :
+        <span>
+          <p>
+          Place coursor in Word template in the left frame and click buttons in the right frame to insert ADONIS elements in the template. Blue buttons represent model attributes, red buttons represent objects in the model.
+          </p>
+          <Button onClick={(e) => { handleClick(e) }} color='primary' variant="contained">{getName('start')}</Button>
+          </span>
+  }
         <form
           onSubmit={(e) => { handleSubmit2(e) }}
         >
@@ -395,9 +419,7 @@ return splitedelenmentsinner;
           />
           <button>Search</button>
         </form>
-          <p className="ms-font-l">
-            Insert structure name, then click <b>Get Structure!</b>.
-          </p>
+        <span style={{width: '100%'}}>
           <JSONTree
           key={this.state.key}
           data={fdata}
@@ -414,8 +436,7 @@ return dorender;
               valueRenderer={raw => <Value raw={raw} searched2={searched2} />}
              getItemString={(type, data, itemType, itemString) => <span>{data.class || data.name}</span>}
           />
-          {/* <EnhancedTable rows={arraytotableout}></EnhancedTable> */}
-        </HeroList>
+          </span>
       </div>
     );
   }
