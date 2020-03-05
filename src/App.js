@@ -302,53 +302,20 @@ export default class App extends React.Component
       {
         var renderuj=false;
           splitedelenments.forEach(element => {
-          //  a.every(function(item) {
-            //  console.log("a: " +  a)
-            //  console.log("item: " +  item)
-            //  console.log("element: " +  element)
-            console.log(element.slice().reverse().toString())
-            console.log(a.toString())
 
-            if( a.toString()!=='' && element.slice().reverse().toString().includes(a.toString()))
+            if( a.toString()!=='' && element.slice().reverse().toString().toUpperCase().includes(a.toString().toUpperCase())&& !element.slice().reverse().toString().toUpperCase().includes(('o'+a.toString()).toUpperCase()))
                       {
-                        console.log("renderuje!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
             renderuj=true;
           }
-          //  else  {
-          //     renderuj=false;
-          //  }
-        //  });
          });
          return renderuj;
-//         var qq =flatten(fdata);
-//         var splitedelenment=[]
-//         var renderuj=false
-//          Object.keys(qq).forEach(element => {
-//           if (sercz!=='' && typeof qq[element] === 'string'&& qq[element].includes(sercz))
-//           {
-//           splitedelenment = element.split('.');
-// for (let i = 0; i < a.length; i++) {
-//           if (a[a.length-1-i]==splitedelenment[i])
-//           {
-//             // console.log(splitedelenment)
-//             renderuj=true
-//             // return true
-//           }
-//            else  {
-//               renderuj=false
-//            }
-//         }
-//           }
-//          });
-//          return renderuj;
       }
       const preparekeysforsearch = (key) =>
       {
-console.log("kejjj" + key)
 var qq =flatten(fdata);
 var splitedelenmentsinner=[]
  Object.keys(qq).forEach(element => {
-  if (key!=='' && typeof qq[element] === 'string'&& qq[element].includes(key))
+  if (key!=='' && typeof qq[element] === 'string'&& qq[element].toUpperCase().includes(key.toUpperCase()))
   {
   splitedelenmentsinner.push(element.split('.'));
   }
@@ -373,29 +340,6 @@ return splitedelenmentsinner;
         .then(data =>
         {
           this.setState({ fdata: prepareData(data) });
-                //  var arrayrows = [];
-        //   function getAttrsInn2 (obj)
-        //   {
-        //     let row = {};
-        //   for (const prop in obj)
-        //   {
-        //     const value = obj[prop];
-        //     if (typeof value === 'object')
-        //     {
-        //       getAttrsInn2(value);
-        //     }
-        //     else if (typeof value === 'string' || typeof value === 'number' )
-        //     {
-        //         row[prop]=value;
-        //     }
-        //     if(Object.entries(row).length !== 0 && row.constructor === Object && !arrayrows.includes(row))
-        //     {arrayrows.push(row);}
-        //   }
-        // }
-        //   getAttrsInn2(prepareData(data));
-// console.log(arrayrows)
-  // this.setState({ arraytotableout:   arrayrows });
-  //  this.setState({ splitedelenments: preparekeysforsearch(searched)});
         });
     };
     const handleSubmit2 = (e) =>
@@ -405,6 +349,7 @@ return splitedelenmentsinner;
       this.setState({ key: Math.random() });
       var searched = e.target.username2.value;
    this.setState({ splitedelenments: preparekeysforsearch(searched)});
+   this.setState({ searched2: searched});
     };
     const theme = {
       scheme: 'monokai',
@@ -461,7 +406,6 @@ return splitedelenmentsinner;
             invertTheme={false}
             shouldExpandNode={(a,b,c) => {
               let dorender = nodechecker(a)
-        console.log("czeker" + dorender )
 return dorender;
             }}
             // labelRenderer={(raw, itemType) =>raw}
