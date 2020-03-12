@@ -107,11 +107,7 @@ return splitedelenmentsinner;
   //     ["{$av[0]}","{$av[1]}","{$av[2]}","{$av[3]}","{$av[4]}"],
   //     ["{END-FOR av}","","","",""],
   //   ];
-
   //   selectionRange.insertTable(4, 5, "After", items);
-
-
-
   //   await context.sync();
   // });
   //   };

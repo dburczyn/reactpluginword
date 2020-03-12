@@ -31,7 +31,7 @@ if (typeof value==='string' && searched!=='' && value.toUpperCase().includes(sea
 }
 else if (value.length > 30)
   {value = value.substring(0,30) + "..."}
-        return <span style={{width: '100%'}}> {value !== 'undefined' ? value : <ImageIcon color="primary" />}</span>
+        return <span key={Math.random()} style={{width: '100%'}}> {value !== 'undefined' ? value : <ImageIcon color="primary" />}</span>
       }
       return null
       })}
