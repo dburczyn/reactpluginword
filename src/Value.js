@@ -6,16 +6,24 @@ export default class Value extends React.Component
   {
     super(props);
     this.state = { data: props.raw,
+      visible: props.visible,
+     kij: props.kij,
     searched:props.searched2 };
   }
   render ()
   {
-    const { data,searched } = this.state;
+    const { data,searched,visible,kij } = this.state;
     var splited = data.toString().split(String.fromCharCode(7));
-    console.log(searched)
     return (
       <span style={{width: '100%'}}>
 {splited.map((value) => {
+value=value.replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&gt;/g, '>')
+          .replace(/&lt;/g, '<')
+          .replace(/&#039;/g, "'");
+  if (kij!=='searchname')
+  {
 if (typeof value==='string' && searched!=='' && value.toUpperCase().includes(searched.toUpperCase()))
 {
     const parts = value.split(new RegExp(`(${searched})`, 'gi'));
@@ -24,6 +32,8 @@ if (typeof value==='string' && searched!=='' && value.toUpperCase().includes(sea
 else if (value.length > 30)
   {value = value.substring(0,30) + "..."}
         return <span style={{width: '100%'}}> {value !== 'undefined' ? value : <ImageIcon color="primary" />}</span>
+      }
+      return null
       })}
       </span>
     );

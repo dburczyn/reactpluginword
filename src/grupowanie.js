@@ -29,8 +29,13 @@ export function grupowanie(preparedData) {
     });
     groupedfinalobects.forEach(element => {
 let groupedfinalobects2 = [];
+
          Object.keys(element.ochapters).forEach(element2 => {
-  let mainobj2 = element.ochapters[element2][0]
+  let mainobj2 = element.ochapters[element2][0];
+
+if (mainobj2 && mainobj2.attributes)
+{
+
   element.ochapters[element2].forEach(element3 => {
       mergeWith(mainobj2, element3, customizer);
   });
@@ -45,7 +50,13 @@ var groupedobjects3 = groupBy(mainobj2.attributes, 'name');
 });
 mainobj2.attributes=groupedfinalobects3;
   groupedfinalobects2.push(mainobj2)
+}
+
+
      });
+
+
+
      element.ochapters=groupedfinalobects2;
 });
     return groupedfinalobects;
